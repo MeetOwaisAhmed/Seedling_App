@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Detail — Aisha Mahmood</title>
+    <style>
+        :root {
+            --bg-page: #FCFBF7;
+            --bg-card: #F5F1E6;
+            --border-card: #E6E1D1;
+            --text-primary: #1A1A1A;
+            --text-secondary: #5C5C5C;
+            --text-tertiary: #888888;
+            --color-tree: #4F6D46;
+            --color-sapling: #7D8C55;
+            --color-progress-bg: #EBE7DA;
+            --font-serif: 'Georgia', 'Times New Roman', serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --space-md: 16px;
+            --space-lg: 24px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        html, body {
+            height: 100%;
+            background-color: #DDD9CF;
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-sans);
+        }
+
+        .screen {
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            width: 390px; height: 844px;
+            overflow: hidden;
+            display: flex; flex-direction: column;
+            position: relative;
+            border-radius: 40px;
+            border: 1px solid #ccc;
+            box-shadow: 0 28px 72px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        /* ── Status Bar ── */
+        .status-bar {
+            height: 50px; padding: 14px var(--space-lg) 0;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .status-time { font-size: 15px; font-weight: 600; }
+        .status-icons { display: flex; align-items: center; gap: 6px; }
+
+        /* ── Header ── */
+        .header {
+            padding: 10px var(--space-lg) 16px;
+            background-color: var(--bg-page);
+            z-index: 10; flex-shrink: 0;
+        }
+
+        .back-nav {
+            display: flex; align-items: center; gap: 8px;
+            color: var(--color-tree); font-weight: 600; font-size: 14px;
+            margin-bottom: 14px; text-decoration: none; cursor: pointer;
+        }
+
+        .profile-section {
+            display: flex; align-items: center; gap: 20px;
+        }
+
+        .avatar-lg {
+            width: 72px; height: 72px; border-radius: 36px;
+            background: linear-gradient(160deg, #E8F0E0 0%, #C8DDB8 100%);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; overflow: hidden;
+        }
+
+        .student-title { font-family: var(--font-serif); font-size: 26px; line-height: 1.2; }
+        .student-meta { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+
+        /* ── Scroll container ── */
+        .scroll-container {
+            flex: 1; overflow-y: auto;
+            padding: 0 var(--space-lg) 160px;
+            display: flex; flex-direction: column; gap: 24px;
+        }
+        .scroll-container::-webkit-scrollbar { display: none; }
+
+        .section-label {
+            font-size: 12px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--text-tertiary); margin-bottom: 12px;
+        }
+
+        /* ── Cards ── */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 20px; padding: 20px;
+            border: 1px solid var(--border-card);
+        }
+
+        .score-large { font-family: var(--font-serif); font-size: 44px; color: var(--color-tree); font-weight: bold; }
+        .score-total { color: var(--text-secondary); font-size: 18px; }
+
+        .skill-grid { display: grid; gap: 16px; }
+        .skill-item { display: flex; flex-direction: column; gap: 6px; }
+        .skill-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 500; }
+
+        .progress-container { width: 100%; height: 8px; background-color: var(--color-progress-bg); border-radius: 4px; overflow: hidden; }
+        .progress-bar { height: 100%; border-radius: 4px; }
+
+        /* ── Activity timeline ── */
+        .activity-timeline { display: flex; flex-direction: column; gap: 16px; position: relative; }
+        .activity-item { display: flex; gap: 16px; position: relative; }
+        .activity-dot { width: 10px; height: 10px; border-radius: 5px; background-color: var(--color-sapling); margin-top: 6px; flex-shrink: 0; z-index: 2; }
+        .activity-line { position: absolute; left: 4px; top: 10px; bottom: -22px; width: 2px; background-color: var(--border-card); z-index: 1; }
+        .activity-content { flex: 1; }
+        .activity-text { font-size: 14px; color: var(--text-primary); font-weight: 500; }
+        .activity-date { font-size: 12px; color: var(--text-tertiary); }
+
+        /* ── Action container ── */
+        .action-container {
+            position: absolute; bottom: 84px; left: 0; right: 0;
+            padding: 16px var(--space-lg);
+            background: linear-gradient(transparent, var(--bg-page) 20%);
+            z-index: 20;
+        }
+
+        .primary-btn {
+            width: 100%; background-color: var(--color-tree); color: white; border: none;
+            border-radius: 14px; height: 56px; font-size: 16px; font-weight: 600;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 4px 12px rgba(79,109,70,0.2); cursor: pointer; font-family: inherit;
+        }
+
+        /* ── Bottom Nav ── */
+        .bottom-nav {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            height: 84px; background: white;
+            border-top: 1px solid var(--border-card);
+            display: flex; justify-content: space-around; align-items: center;
+            padding-bottom: 20px; z-index: 30;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-tertiary); cursor: pointer; text-decoration: none; }
+        .nav-item.active { color: var(--color-tree); }
+        .nav-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* ── Modals ── */
+        .modal-overlay {
+            display: none; position: absolute; inset: 0;
+            background: rgba(0,0,0,0.35); z-index: 100;
+            border-radius: 40px; align-items: flex-end;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal-sheet {
+            background: white; border-radius: 28px 28px 0 0;
+            width: 100%; padding: 24px 24px 40px;
+            animation: slideUp 0.25s ease; box-sizing: border-box;
+            max-height: 88vh; overflow-y: auto;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        .modal-handle { width: 40px; height: 4px; background: #E0E0E0; border-radius: 2px; margin: 0 auto 20px; }
+        .modal-title { font-family: var(--font-serif); font-size: 20px; margin-bottom: 6px; }
+        .modal-subtitle { font-size: 13px; color: var(--text-tertiary); margin-bottom: 20px; }
+
+        .input-label { font-size: 12px; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; display: block; }
+        .input-field { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border-card); border-radius: 12px; font-size: 15px; font-family: inherit; background: var(--bg-page); color: var(--text-primary); margin-bottom: 14px; outline: none; appearance: none; }
+        .input-field:focus { border-color: var(--color-tree); }
+
+        .modal-option { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 14px; border: 1.5px solid var(--border-card); margin-bottom: 10px; cursor: pointer; transition: all 0.15s; }
+        .modal-option.selected { border-color: var(--color-tree); background: #F0F5ED; }
+        .modal-option-icon { font-size: 22px; }
+        .modal-option-title { font-size: 14px; font-weight: 600; }
+        .modal-option-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+        .modal-check { width: 24px; height: 24px; border-radius: 50%; background: var(--color-tree); color: white; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+        .modal-cta { width: 100%; padding: 14px; border: none; border-radius: 14px; background: var(--color-tree); font-size: 15px; font-weight: 600; color: white; cursor: pointer; font-family: inherit; }
+        .modal-close { margin-top: 10px; width: 100%; padding: 14px; border: 1.5px solid var(--border-card); border-radius: 14px; background: none; font-size: 15px; font-weight: 600; color: var(--text-secondary); cursor: pointer; font-family: inherit; }
+
+        .topic-btn { padding: 8px 14px; border-radius: 20px; border: 1.5px solid var(--border-card); background: var(--bg-page); font-size: 13px; font-weight: 600; color: var(--text-secondary); cursor: pointer; font-family: inherit; transition: all 0.15s; }
+        .topic-btn.active { border-color: var(--color-tree); background: #F0F5ED; color: var(--color-tree); }
+
+        /* ── Settings ── */
+        .settings-modal-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; border-radius: 40px; align-items: flex-end; }
+        .settings-modal-overlay.open { display: flex; }
+        .appearance-option { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 12px; border: 1.5px solid var(--border-card); margin-bottom: 10px; cursor: pointer; }
+        .appearance-option.selected { border-color: var(--color-tree); background: #F0F5ED; }
+        .lang-option { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-card); margin-bottom: 8px; cursor: pointer; }
+        .lang-option.selected { border-color: var(--color-tree); background: #F0F5ED; }
+
+        /* ── Assign Practice Screen ── */
+        .assign-screen {
+            display: none; position: absolute; inset: 0;
+            background: var(--bg-page); z-index: 60;
+            flex-direction: column; overflow: hidden;
+        }
+        .assign-screen.open { display: flex; }
+
+        .gap-card { background: white; border: 1px solid var(--border-card); border-radius: 20px; padding: 20px; margin-bottom: 16px; }
+        .gap-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+        .gap-info h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+        .gap-info p { font-size: 13px; color: var(--text-secondary); }
+
+        .rec-pill { background: var(--bg-card); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 12px; margin-top: 8px; border: 1.5px solid transparent; cursor: pointer; transition: all 0.15s; }
+        .rec-pill.selected { border-color: var(--color-tree); background: #F0F5ED; }
+        .pill-icon { width: 32px; height: 32px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--color-tree); flex-shrink: 0; }
+        .pill-content { flex: 1; min-width: 0; }
+        .pill-title { font-size: 13px; font-weight: 600; display: block; }
+        .pill-meta { font-size: 11px; color: var(--text-tertiary); }
+        .pill-checkbox { width: 20px; height: 20px; border: 2px solid var(--border-card); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+        .rec-pill.selected .pill-checkbox { background: var(--color-tree); border-color: var(--color-tree); }
+
+        .assign-footer { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px var(--space-lg) 34px; background: linear-gradient(transparent, var(--bg-page) 30%); display: flex; flex-direction: column; gap: 12px; z-index: 20; }
+        .assign-summary { background: #F0F4EE; padding: 8px 16px; border-radius: 10px; font-size: 13px; color: var(--color-tree); font-weight: 600; text-align: center; }
+
+        .date-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); z-index: 30; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .date-overlay.active { opacity: 1; pointer-events: all; }
+        .date-sheet-panel { position: absolute; bottom: 0; left: 0; right: 0; background: var(--bg-page); border-radius: 28px 28px 0 0; padding: 12px 24px 34px; z-index: 40; transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1); box-shadow: 0 -8px 32px rgba(0,0,0,0.12); max-height: 85%; overflow-y: auto; }
+        .date-sheet-panel.active { transform: translateY(0); }
+        .date-option { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-radius: 14px; border: 1.5px solid var(--border-card); background: white; cursor: pointer; transition: all 0.15s ease; margin-bottom: 8px; }
+        .date-option.selected { border-color: var(--color-tree); background: #F0F4EE; }
+        .date-option-left { display: flex; align-items: center; gap: 12px; }
+        .date-option-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; color: var(--color-tree); flex-shrink: 0; }
+        .date-option.selected .date-option-icon { background: var(--color-tree); color: white; }
+        .date-option-label { font-size: 14px; font-weight: 600; }
+        .date-option-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 1px; }
+        .date-radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border-card); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .date-option.selected .date-radio { border-color: var(--color-tree); background: var(--color-tree); }
+        .confirm-btn { width: 100%; background-color: var(--color-tree); color: white; border: none; border-radius: 14px; height: 52px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; font-family: inherit; margin-top: 8px; }
+        .cal-day { text-align: center; font-size: 14px; font-weight: 500; padding: 9px 2px; border-radius: 8px; cursor: pointer; color: var(--text-primary); }
+        .cal-day:not(.cal-day-past):hover { background: var(--bg-card); }
+        .cal-day-past { color: #CCC; cursor: default; }
+        .cal-day-selected { background: var(--color-tree) !important; color: white !important; }
+
+        /* ── Assignment Success Screen ── */
+        .success-screen {
+            display: none; position: absolute; inset: 0;
+            background: var(--bg-page); z-index: 65;
+            flex-direction: column; overflow: hidden;
+        }
+        .success-screen.open { display: flex; animation: fadeSlideIn 0.35s ease; }
+        @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+        .celebration-icon {
+            width: 100px; height: 100px; background: #EBF0E6; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 28px; position: relative; flex-shrink: 0;
+            animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes bounceIn {
+            0%   { transform: scale(0.3); opacity: 0; }
+            50%  { transform: scale(1.05); opacity: 1; }
+            70%  { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+        .success-secondary-btn {
+            width: 100%; background: transparent; color: var(--color-tree);
+            border: 2px solid var(--color-tree); border-radius: 14px; height: 52px;
+            font-size: 15px; font-weight: 600; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; font-family: inherit;
+        }
+        .tertiary-link {
+            text-align: center; color: var(--text-secondary); font-size: 14px;
+            font-weight: 500; text-decoration: underline; text-underline-offset: 4px; cursor: pointer;
+        }
+
+        /* ── Student Select Sheet ── */
+        .student-select-overlay {
+            display: none; position: absolute; inset: 0;
+            background: rgba(0,0,0,0.4); z-index: 70; align-items: flex-end;
+        }
+        .student-select-overlay.open { display: flex; }
+        .student-select-sheet {
+            background: var(--bg-page); width: 100%; height: 90%;
+            border-radius: 32px 32px 0 0; padding: 24px 24px 0;
+            display: flex; flex-direction: column;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+            position: relative; animation: slideUp 0.28s ease;
+        }
+        .ss-search-input {
+            width: 100%; padding: 12px 16px 12px 40px;
+            background: var(--bg-card); border: 1px solid var(--border-card);
+            border-radius: 12px; font-size: 14px; font-family: inherit;
+            outline: none; color: var(--text-primary);
+        }
+        .ss-search-input:focus { border-color: var(--color-tree); }
+        .ss-student-row {
+            display: flex; align-items: center; padding: 12px 0;
+            border-bottom: 1px solid #F0EDE4; cursor: pointer;
+        }
+        .ss-checkbox {
+            width: 22px; height: 22px; border: 2px solid var(--border-card);
+            border-radius: 6px; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; margin-right: 14px; transition: all 0.15s;
+        }
+        .ss-checkbox.checked { background: var(--color-tree); border-color: var(--color-tree); }
+        .ss-avatar {
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 13px; color: var(--text-secondary);
+            flex-shrink: 0; margin-right: 12px;
+        }
+        .ss-roster-list { flex: 1; overflow-y: auto; margin: 0 -24px; padding: 0 24px; }
+        .ss-roster-list::-webkit-scrollbar { display: none; }
+        .ss-footer { padding: 16px 0 36px; border-top: 1px solid #F0EDE4; flex-shrink: 0; }
+        .ss-assign-btn {
+            width: 100%; height: 52px; border-radius: 14px; font-size: 15px; font-weight: 600;
+            border: none; background: var(--color-tree); color: white; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-family: inherit;
+        }
+
+        /* ── Confirm toast ── */
+        .toast { position: absolute; top: 64px; left: var(--space-lg); right: var(--space-lg); background: #1A1A1A; color: white; padding: 13px 16px; border-radius: 14px; font-size: 14px; font-weight: 500; z-index: 300; display: none; animation: toastIn 0.22s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 430px) {
+            html, body { display: block; width: 100%; height: 100dvh; background-color: var(--bg-page); margin: 0; padding: 0; }
+            .screen { width: 100%; height: 100dvh; border-radius: 0; border: none; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="screen">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+            <svg width="17" height="12" viewBox="0 0 17 12" fill="var(--text-primary)"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2" width="3" height="10" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="var(--text-primary)" stroke-width="1.5"><path d="M1 4.5C3.8 1.7 8 1 8 1s4.2.7 7 3.5" stroke-linecap="round"/><path d="M3.2 6.8C4.8 5.1 8 4.5 8 4.5s3.2.6 4.8 2.3" stroke-linecap="round"/><path d="M5.5 9.1C6.3 8.3 8 8 8 8s1.7.3 2.5 1.1" stroke-linecap="round"/><circle cx="8" cy="11" r="1" fill="var(--text-primary)" stroke="none"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="var(--text-primary)" stroke-opacity="0.35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="var(--text-primary)"/><path d="M23 4v4a2 2 0 000-4z" fill="var(--text-primary)" fill-opacity="0.4"/></svg>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="roster.html" class="back-nav">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+            <span>Room 2</span>
+        </a>
+        <div class="profile-section">
+            <div class="avatar-lg">
+                <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+                    <rect x="23" y="34" width="6" height="12" rx="3" fill="#8B6340"/>
+                    <ellipse cx="26" cy="46" rx="9" ry="3" fill="#A0784A" opacity="0.3"/>
+                    <ellipse cx="26" cy="26" rx="14" ry="13" fill="#5A8040"/>
+                    <ellipse cx="26" cy="22" rx="11" ry="10" fill="#6A9A4A"/>
+                    <ellipse cx="26" cy="18" rx="8" ry="7" fill="#7DB055"/>
+                    <ellipse cx="24" cy="15" rx="4" ry="3.5" fill="#92C463" opacity="0.7"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="student-title">Aisha Mahmood</h1>
+                <p class="student-meta">Grade 3 · ID: #3082</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <main class="scroll-container">
+
+        <!-- Reading Breakdown -->
+        <section>
+            <h2 class="section-label">Reading Breakdown</h2>
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <div style="display:flex; align-items:baseline; gap:4px;">
+                        <span class="score-large">85%</span>
+                        <span class="score-total">mastery</span>
+                    </div>
+                    <button onclick="showToast('Full reading report coming soon')" style="display:flex; align-items:center; justify-content:center; background:#EBF0E6; border:1px solid #D5E0CE; border-radius:50%; width:32px; height:32px; color:#4F6D46; cursor:pointer; flex-shrink:0;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                    </button>
+                </div>
+                <div class="skill-grid">
+                    <div class="skill-item">
+                        <div class="skill-header"><span>Phonics</span><span>92%</span></div>
+                        <div class="progress-container"><div class="progress-bar" style="width:92%; background:var(--color-sapling);"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header"><span>Reading Comprehension</span><span>78%</span></div>
+                        <div class="progress-container"><div class="progress-bar" style="width:78%; background:var(--color-sapling);"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header"><span>Vocabulary</span><span>85%</span></div>
+                        <div class="progress-container"><div class="progress-bar" style="width:85%; background:var(--color-sapling);"></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Math Gap Indicators -->
+        <section>
+            <h2 class="section-label">Math Gap Indicators</h2>
+            <div class="card" style="background:#F7F2EA; border-color:#EBE3D5;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <div style="display:flex; align-items:baseline; gap:4px;">
+                        <span style="font-family:var(--font-serif); font-size:44px; color:#7A5C3A; font-weight:bold;">71%</span>
+                        <span style="color:var(--text-secondary); font-size:18px;">mastery</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="background:#FDEBD4; color:#B85C00; font-size:11px; font-weight:700; padding:5px 11px; border-radius:20px; letter-spacing:0.05em; border:1px solid #F2C890;">2 Gaps</span>
+                        <button onclick="showToast('Full math report coming soon')" style="display:flex; align-items:center; justify-content:center; background:#EBF0E6; border:1px solid #D5E0CE; border-radius:50%; width:32px; height:32px; color:#4F6D46; cursor:pointer; flex-shrink:0;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:20px;">
+                    <div>
+                        <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:500; margin-bottom:6px;"><span>Number Sense</span><span style="color:#4F6D46;">88%</span></div>
+                        <div class="progress-container"><div class="progress-bar" style="width:88%; background:#7D8C55;"></div></div>
+                    </div>
+                    <div>
+                        <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:500; margin-bottom:6px;"><span>Addition &amp; Subtraction</span><span style="color:#B85C00;">62%</span></div>
+                        <div class="progress-container"><div class="progress-bar" style="width:62%; background:#D4834A;"></div></div>
+                    </div>
+                    <div>
+                        <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:500; margin-bottom:6px;"><span>Place Value</span><span style="color:#B85C00;">55%</span></div>
+                        <div class="progress-container"><div class="progress-bar" style="width:55%; background:#D4834A;"></div></div>
+                    </div>
+                    <div>
+                        <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:500; margin-bottom:6px;"><span>Measurement &amp; Data</span><span style="color:#A07A00;">74%</span></div>
+                        <div class="progress-container"><div class="progress-bar" style="width:74%; background:#C4A830;"></div></div>
+                    </div>
+                </div>
+
+                <div style="background:#FFF8F0; border-radius:12px; padding:12px 14px; margin-bottom:16px; display:flex; gap:10px; align-items:flex-start;">
+                    <span style="font-size:16px; margin-top:1px;">📝</span>
+                    <p style="font-size:13px; color:var(--text-secondary); line-height:1.5;">Focus on <strong style="color:#7A5C3A;">Place Value</strong> and <strong style="color:#7A5C3A;">Addition</strong> before moving to multi-digit operations.</p>
+                </div>
+
+                <button onclick="openAssignScreen()" style="width:100%; background:#7A5C3A; color:white; border:none; border-radius:12px; height:48px; font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Assign Practice Exercises
+                </button>
+            </div>
+        </section>
+
+        <!-- Suggested Interventions -->
+        <section>
+            <h2 class="section-label">Suggested Interventions</h2>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <button onclick="openModal('modal-schedule')" style="width:100%; background:var(--bg-card); border:1.5px solid var(--border-card); border-radius:12px; padding:13px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; text-align:left;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4F6D46" stroke-width="2.2" style="flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span style="flex:1; font-size:14px; font-weight:600; color:var(--text-primary);">Schedule 1-on-1 Support</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4F6D46" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+                <button onclick="openModal('modal-progress')" style="width:100%; background:var(--bg-card); border:1.5px solid var(--border-card); border-radius:12px; padding:13px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; text-align:left;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4F6D46" stroke-width="2.2" style="flex-shrink:0;"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                    <span style="flex:1; font-size:14px; font-weight:600; color:var(--text-primary);">Send Progress Update to Family</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4F6D46" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+                <button onclick="openModal('modal-flag')" style="width:100%; background:var(--bg-card); border:1.5px solid var(--border-card); border-radius:12px; padding:13px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; text-align:left;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4F6D46" stroke-width="2.2" style="flex-shrink:0;"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                    <span style="flex:1; font-size:14px; font-weight:600; color:var(--text-primary);">Flag for Support Review</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4F6D46" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Recent Activity -->
+        <section>
+            <h2 class="section-label">Recent Activity</h2>
+            <div class="activity-timeline">
+                <div class="activity-item">
+                    <div class="activity-dot"></div>
+                    <div class="activity-line"></div>
+                    <div class="activity-content">
+                        <div class="activity-text">Completed "Vowel Sounds" Level 4</div>
+                        <div class="activity-date">Today at 10:45 AM</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-dot"></div>
+                    <div class="activity-line"></div>
+                    <div class="activity-content">
+                        <div class="activity-text">Started Diagnostic Test</div>
+                        <div class="activity-date">Yesterday at 2:15 PM</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-dot" style="background-color:var(--border-card);"></div>
+                    <div class="activity-content">
+                        <div class="activity-text">Joined Seedling Academy</div>
+                        <div class="activity-date">Oct 12, 2023</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+        <a class="nav-item active" href="my-classes.html">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            <span class="nav-label">Classes</span>
+        </a>
+        <a class="nav-item" href="reports.html">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span class="nav-label">Reports</span>
+        </a>
+        <div class="nav-item" onclick="showSettings(true)" style="cursor:pointer;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            <span class="nav-label">Settings</span>
+        </div>
+    </nav>
+
+    <!-- ── Flag for Support Review Modal ── -->
+    <div class="modal-overlay" id="modal-flag" onclick="closeModal('modal-flag')">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <h2 class="modal-title">Flag for Support Review</h2>
+            <p class="modal-subtitle">Aisha Mahmood · Grade 3</p>
+            <label class="input-label">Concern Area</label>
+            <select class="input-field">
+                <option selected>Math — Place Value &amp; Addition</option>
+                <option>Reading Comprehension</option>
+                <option>Social-Emotional Wellbeing</option>
+                <option>Overall Engagement</option>
+            </select>
+            <label class="input-label">Priority</label>
+            <div style="display:flex; gap:8px; margin-bottom:14px;">
+                <button id="pri-low" onclick="setPriority('low')" style="flex:1; padding:10px; border-radius:10px; border:1.5px solid var(--border-card); background:var(--bg-page); font-size:13px; font-weight:600; cursor:pointer; color:var(--text-secondary); font-family:inherit;">Low</button>
+                <button id="pri-med" onclick="setPriority('med')" style="flex:1; padding:10px; border-radius:10px; border:1.5px solid var(--color-tree); background:#F0F5ED; font-size:13px; font-weight:600; cursor:pointer; color:var(--color-tree); font-family:inherit;">Medium</button>
+                <button id="pri-high" onclick="setPriority('high')" style="flex:1; padding:10px; border-radius:10px; border:1.5px solid var(--border-card); background:var(--bg-page); font-size:13px; font-weight:600; cursor:pointer; color:var(--text-secondary); font-family:inherit;">High</button>
+            </div>
+            <label class="input-label">Notes for Reviewer</label>
+            <input class="input-field" type="text" placeholder="Describe the concern or context…">
+            <button class="modal-cta" onclick="showConfirm('modal-flag','Aisha flagged for support review!')" style="margin-top:8px;">Submit Flag</button>
+            <button class="modal-close" onclick="closeModal('modal-flag')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ── Schedule 1-on-1 Modal ── -->
+    <div class="modal-overlay" id="modal-schedule" onclick="closeModal('modal-schedule')">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <h2 class="modal-title">Schedule 1-on-1</h2>
+            <p class="modal-subtitle">Aisha Mahmood · Grade 3</p>
+            <label class="input-label">Support Area</label>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+                <button class="topic-btn active" onclick="setTopic(this)">📐 Math</button>
+                <button class="topic-btn" onclick="setTopic(this)">📖 Reading</button>
+                <button class="topic-btn" onclick="setTopic(this)">✏️ Writing</button>
+                <button class="topic-btn" onclick="setTopic(this)">💬 Social-Emotional</button>
+                <button class="topic-btn" onclick="setTopic(this)">🔧 Other</button>
+            </div>
+            <label class="input-label">Date</label>
+            <select class="input-field">
+                <option>Today — Fri, Feb 21</option>
+                <option>Monday — Feb 24</option>
+                <option>Tuesday — Feb 25</option>
+                <option>Wednesday — Feb 26</option>
+                <option>Thursday — Feb 27</option>
+            </select>
+            <label class="input-label">Time</label>
+            <select class="input-field">
+                <option>8:30 AM</option>
+                <option>9:00 AM</option>
+                <option selected>10:00 AM</option>
+                <option>11:00 AM</option>
+                <option>1:00 PM</option>
+                <option>2:00 PM</option>
+                <option>3:00 PM</option>
+            </select>
+            <label class="input-label">Duration</label>
+            <select class="input-field">
+                <option>15 minutes</option>
+                <option selected>30 minutes</option>
+                <option>45 minutes</option>
+                <option>60 minutes</option>
+            </select>
+            <label class="input-label">Notes (optional)</label>
+            <input class="input-field" type="text" placeholder="Focus areas, resources needed…">
+            <button class="modal-cta" onclick="showConfirm('modal-schedule','Session scheduled!')" style="margin-top:8px;">Confirm Session</button>
+            <button class="modal-close" onclick="closeModal('modal-schedule')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ── Send Progress Update Modal ── -->
+    <div class="modal-overlay" id="modal-progress" onclick="closeModal('modal-progress')">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <h2 class="modal-title">Progress Update</h2>
+            <p class="modal-subtitle">Sending to Aisha's family</p>
+            <div style="background:var(--bg-card); border-radius:14px; padding:14px; margin-bottom:16px; border:1px solid var(--border-card);">
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-tertiary); margin-bottom:8px;">Preview</div>
+                <p style="font-size:14px; color:var(--text-secondary); line-height:1.6;">Hi, this is a progress update for <strong style="color:var(--text-primary);">Aisha Mahmood</strong>. She is showing great strength in Phonics (92%) and Vocabulary (85%). We are focusing on Place Value and Addition this week to continue building confidence. 🌱</p>
+            </div>
+            <label class="input-label">Parent Phone Number</label>
+            <input class="input-field" type="tel" value="+92 321 4567890">
+            <label class="input-label">Add a note</label>
+            <input class="input-field" type="text" placeholder="Optional personal message…">
+            <button class="modal-cta" onclick="showConfirm('modal-progress','Update sent to family!')" style="margin-top:8px;">Send Update</button>
+            <button class="modal-close" onclick="closeModal('modal-progress')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ── Settings Screen ── -->
+    <div id="settings-screen" style="display:none; position:absolute; inset:0; background:var(--bg-page); border-radius:40px; z-index:50; flex-direction:column; overflow:hidden;">
+        <div style="padding:60px var(--space-lg) 16px; background:var(--bg-page); flex-shrink:0;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <h1 style="font-family:var(--font-serif); font-size:28px;">Settings</h1>
+                <button onclick="showSettings(false)" style="background:var(--bg-card); border:1px solid var(--border-card); border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-secondary);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+        </div>
+        <div style="flex:1; overflow-y:auto; padding:0 var(--space-lg) 32px; display:flex; flex-direction:column; gap:24px;">
+
+            <!-- Account -->
+            <div>
+                <div class="section-label">Account</div>
+                <div style="background:var(--bg-card); border-radius:16px; border:1px solid var(--border-card); overflow:hidden;">
+                    <div onclick="openSettingsModal('modal-edit-profile')" style="display:flex; align-items:center; gap:14px; padding:16px; cursor:pointer;">
+                        <div style="width:44px; height:44px; border-radius:22px; background:linear-gradient(160deg,#E8F0E0 0%,#C8DDB8 100%); display:flex; align-items:center; justify-content:center; font-family:var(--font-serif); font-size:18px; font-weight:600; color:var(--color-tree);">A</div>
+                        <div style="flex:1;"><div style="font-size:15px; font-weight:600;">Annus Awan</div><div style="font-size:13px; color:var(--text-tertiary);">annus.awan@seedling.edu</div></div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4F6D46" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                    </div>
+                    <div style="height:1px; background:var(--border-card); margin:0 16px;"></div>
+                    <div onclick="openSettingsModal('modal-password')" style="display:flex; align-items:center; gap:14px; padding:14px 16px; cursor:pointer;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-tree)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                        <span style="flex:1; font-size:14px; font-weight:500;">Change Password</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div>
+                <div class="section-label">Notifications</div>
+                <div style="background:var(--bg-card); border-radius:16px; border:1px solid var(--border-card); overflow:hidden;">
+                    <div style="display:flex; align-items:center; gap:14px; padding:14px 16px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-tree)" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                        <span style="flex:1; font-size:14px; font-weight:500;">Push Notifications</span>
+                        <div onclick="toggleSwitch(this)" style="width:44px; height:26px; border-radius:13px; background:var(--color-tree); position:relative; cursor:pointer; transition:background 0.2s; flex-shrink:0;" data-on="true">
+                            <div style="width:20px; height:20px; border-radius:10px; background:white; position:absolute; top:3px; left:21px; transition:left 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+                        </div>
+                    </div>
+                    <div style="height:1px; background:var(--border-card); margin:0 16px;"></div>
+                    <div style="display:flex; align-items:center; gap:14px; padding:14px 16px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-tree)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        <span style="flex:1; font-size:14px; font-weight:500;">Weekly Email Reports</span>
+                        <div onclick="toggleSwitch(this)" style="width:44px; height:26px; border-radius:13px; background:var(--color-tree); position:relative; cursor:pointer; transition:background 0.2s; flex-shrink:0;" data-on="true">
+                            <div style="width:20px; height:20px; border-radius:10px; background:white; position:absolute; top:3px; left:21px; transition:left 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+                        </div>
+                    </div>
+                    <div style="height:1px; background:var(--border-card); margin:0 16px;"></div>
+                    <div style="display:flex; align-items:center; gap:14px; padding:14px 16px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-tree)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        <span style="flex:1; font-size:14px; font-weight:500;">Intervention Alerts</span>
+                        <div onclick="toggleSwitch(this)" style="width:44px; height:26px; border-radius:13px; background:var(--color-tree); position:relative; cursor:pointer; transition:background 0.2s; flex-shrink:0;" data-on="true">
+                            <div style="width:20px; height:20px; border-radius:10px; background:white; position:absolute; top:3px; left:21px; transition:left 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preferences -->
+            <div>
+                <div class="section-label">Preferences</div>
+                <div style="background:var(--bg-card); border-radius:16px; border:1px solid var(--border-card); overflow:hidden;">
+                    <div onclick="openSettingsModal('modal-appearance')" style="display:flex; align-items:center; gap:14px; padding:14px 16px; cursor:pointer;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-tree)" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                        <span style="flex:1; font-size:14px; font-weight:500;">Appearance</span>
+                        <span id="pref-appearance-val" style="font-size:13px; color:var(--text-tertiary); margin-right:6px;">Light</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                    </div>
+                    <div style="height:1px; background:var(--border-card); margin:0 16px;"></div>
+                    <div onclick="openSettingsModal('modal-language')" style="display:flex; align-items:center; gap:14px; padding:14px 16px; cursor:pointer;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-tree)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                        <span style="flex:1; font-size:14px; font-weight:500;">Language</span>
+                        <span id="pref-language-val" style="font-size:13px; color:var(--text-tertiary); margin-right:6px;">English</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                    </div>
+                    <div style="height:1px; background:var(--border-card); margin:0 16px;"></div>
+                    <div onclick="openSettingsModal('modal-report-view')" style="display:flex; align-items:center; gap:14px; padding:14px 16px; cursor:pointer;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-tree)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        <span style="flex:1; font-size:14px; font-weight:500;">Default Report View</span>
+                        <span id="pref-report-val" style="font-size:13px; color:var(--text-tertiary); margin-right:6px;">Detailed</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About -->
+            <div>
+                <div class="section-label">About</div>
+                <div style="background:var(--bg-card); border-radius:16px; border:1px solid var(--border-card); overflow:hidden;">
+                    <div style="display:flex; align-items:center; gap:14px; padding:14px 16px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-tree)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span style="flex:1; font-size:14px; font-weight:500;">App Version</span>
+                        <span style="font-size:13px; color:var(--text-tertiary);">2.1.4</span>
+                    </div>
+                    <div style="height:1px; background:var(--border-card); margin:0 16px;"></div>
+                    <div onclick="openSettingsModal('modal-logout')" style="display:flex; align-items:center; gap:14px; padding:14px 16px; cursor:pointer;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        <span style="flex:1; font-size:14px; font-weight:500; color:#C0392B;">Log Out</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ── Settings: Change Password Modal ── -->
+    <div class="settings-modal-overlay" id="modal-password">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <h2 class="modal-title">Change Password</h2>
+            <p class="modal-subtitle">Annus Awan · annus.awan@seedling.edu</p>
+            <label class="input-label">Current Password</label>
+            <input class="input-field" type="password" placeholder="Enter current password">
+            <label class="input-label">New Password</label>
+            <input class="input-field" type="password" placeholder="At least 8 characters">
+            <label class="input-label">Confirm New Password</label>
+            <input class="input-field" type="password" placeholder="Repeat new password">
+            <button class="modal-cta" onclick="confirmSettingsAction('modal-password','Password updated!')" style="margin-top:8px;">Update Password</button>
+            <button class="modal-close" onclick="closeSettingsModal('modal-password')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ── Settings: Edit Profile Modal ── -->
+    <div class="settings-modal-overlay" id="modal-edit-profile">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <h2 class="modal-title">Edit Profile</h2>
+            <p class="modal-subtitle">Update your account information</p>
+            <label class="input-label">Full Name</label>
+            <input class="input-field" type="text" value="Annus Awan">
+            <label class="input-label">School</label>
+            <input class="input-field" type="text" value="Seedling Academy">
+            <label class="input-label">Grade Level</label>
+            <select class="input-field">
+                <option>Grade 1</option>
+                <option selected>Grade 2</option>
+                <option>Grade 3</option>
+                <option>Grade 4</option>
+                <option>Grade 5</option>
+            </select>
+            <label class="input-label">Role</label>
+            <select class="input-field">
+                <option selected>Class Teacher</option>
+                <option>Subject Teacher</option>
+                <option>School Admin</option>
+            </select>
+            <button class="modal-cta" onclick="confirmSettingsAction('modal-edit-profile','Profile updated!')" style="margin-top:8px;">Save Changes</button>
+            <button class="modal-close" onclick="closeSettingsModal('modal-edit-profile')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ── Settings: Appearance Modal ── -->
+    <div class="settings-modal-overlay" id="modal-appearance">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <h2 class="modal-title">Appearance</h2>
+            <p class="modal-subtitle">Choose your preferred theme</p>
+            <div class="appearance-option selected" onclick="selectAppearance(this,'Light')">
+                <span style="font-size:20px;">☀️</span>
+                <div style="flex:1;"><div style="font-size:14px; font-weight:600;">Light</div><div style="font-size:12px; color:var(--text-tertiary);">Default warm paper theme</div></div>
+                <div class="modal-check">✓</div>
+            </div>
+            <div class="appearance-option" onclick="selectAppearance(this,'Dark')">
+                <span style="font-size:20px;">🌙</span>
+                <div style="flex:1;"><div style="font-size:14px; font-weight:600;">Dark</div><div style="font-size:12px; color:var(--text-tertiary);">Low-light friendly</div></div>
+            </div>
+            <div class="appearance-option" onclick="selectAppearance(this,'Auto')">
+                <span style="font-size:20px;">⚙️</span>
+                <div style="flex:1;"><div style="font-size:14px; font-weight:600;">Auto</div><div style="font-size:12px; color:var(--text-tertiary);">Follows system setting</div></div>
+            </div>
+            <button class="modal-close" onclick="closeSettingsModal('modal-appearance')" style="margin-top:8px;">Done</button>
+        </div>
+    </div>
+
+    <!-- ── Settings: Language Modal ── -->
+    <div class="settings-modal-overlay" id="modal-language">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <h2 class="modal-title">Language</h2>
+            <p class="modal-subtitle">Choose your display language</p>
+            <div class="lang-option selected" onclick="selectLanguage(this,'English')">
+                <span style="font-size:20px;">🇬🇧</span>
+                <div style="flex:1;"><div style="font-size:14px; font-weight:600;">English</div></div>
+                <div class="modal-check">✓</div>
+            </div>
+            <div class="lang-option" onclick="selectLanguage(this,'Urdu')">
+                <span style="font-size:20px;">🇵🇰</span>
+                <div style="flex:1;"><div style="font-size:14px; font-weight:600;">اردو (Urdu)</div></div>
+            </div>
+            <div class="lang-option" onclick="selectLanguage(this,'Punjabi')">
+                <span style="font-size:20px;">🌿</span>
+                <div style="flex:1;"><div style="font-size:14px; font-weight:600;">پنجابی (Punjabi)</div></div>
+            </div>
+            <button class="modal-close" onclick="closeSettingsModal('modal-language')" style="margin-top:8px;">Done</button>
+        </div>
+    </div>
+
+    <!-- ── Settings: Default Report View Modal ── -->
+    <div class="settings-modal-overlay" id="modal-report-view">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <h2 class="modal-title">Default Report View</h2>
+            <p class="modal-subtitle">Choose how reports appear by default</p>
+            <div class="appearance-option" onclick="selectReportView(this,'Summary')">
+                <span style="font-size:20px;">📋</span>
+                <div style="flex:1;"><div style="font-size:14px; font-weight:600;">Summary</div><div style="font-size:12px; color:var(--text-tertiary);">Quick overview of key metrics</div></div>
+            </div>
+            <div class="appearance-option selected" onclick="selectReportView(this,'Detailed')">
+                <span style="font-size:20px;">📊</span>
+                <div style="flex:1;"><div style="font-size:14px; font-weight:600;">Detailed</div><div style="font-size:12px; color:var(--text-tertiary);">Full breakdown with skill data</div></div>
+                <div class="modal-check">✓</div>
+            </div>
+            <button class="modal-close" onclick="closeSettingsModal('modal-report-view')" style="margin-top:8px;">Done</button>
+        </div>
+    </div>
+
+    <!-- ── Settings: Log Out Confirm Modal ── -->
+    <div class="settings-modal-overlay" id="modal-logout">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <h2 class="modal-title">Log Out</h2>
+            <p class="modal-subtitle" style="margin-bottom:24px;">Are you sure you want to sign out of your account?</p>
+            <button class="modal-cta" style="background:#C0392B;" onclick="handleLogout()">Yes, Log Out</button>
+            <button class="modal-close" onclick="closeSettingsModal('modal-logout')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ── Assign Practice Exercise Screen ── -->
+    <div id="assign-screen" class="assign-screen">
+
+        <!-- Header -->
+        <div style="padding:60px var(--space-lg) 16px; flex-shrink:0; background:var(--bg-page);">
+            <div onclick="closeAssignScreen()" class="back-nav" style="cursor:pointer;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+                Aisha Mahmood
+            </div>
+            <h1 style="font-family:var(--font-serif); font-size:24px; line-height:1.2; margin-bottom:4px;">Gap Analysis</h1>
+            <p style="font-size:14px; color:var(--text-secondary);">Identified 3 priority learning gaps</p>
+        </div>
+
+        <!-- Scrollable gap cards -->
+        <div style="flex:1; overflow-y:auto; padding:8px var(--space-lg) 160px;">
+
+            <!-- Gap 1: Number & Operations -->
+            <div class="gap-card">
+                <div class="gap-header">
+                    <div class="gap-info">
+                        <h3>Number &amp; Operations</h3>
+                        <p>Struggling with 3-digit place value</p>
+                    </div>
+                    <span style="background:#FFF4E5; color:#B85C00; font-size:11px; font-weight:700; padding:4px 10px; border-radius:100px; text-transform:uppercase; white-space:nowrap;">Critical</span>
+                </div>
+                <div class="rec-pill selected" onclick="togglePill(this)">
+                    <div class="pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></div>
+                    <div class="pill-content"><span class="pill-title">Base Ten Blocks: 100s</span><span class="pill-meta">Conceptual Exercise</span></div>
+                    <div class="pill-checkbox"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M20 6L9 17l-5-5"/></svg></div>
+                </div>
+                <div class="rec-pill selected" onclick="togglePill(this)">
+                    <div class="pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></div>
+                    <div class="pill-content"><span class="pill-title">Expanded Form Challenge</span><span class="pill-meta">Fluency Practice</span></div>
+                    <div class="pill-checkbox"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M20 6L9 17l-5-5"/></svg></div>
+                </div>
+            </div>
+
+            <!-- Gap 2: Addition & Subtraction -->
+            <div class="gap-card">
+                <div class="gap-header">
+                    <div class="gap-info">
+                        <h3>Addition &amp; Subtraction</h3>
+                        <p>Errors in multi-digit regrouping</p>
+                    </div>
+                    <span style="background:#EBF0E6; color:#4F6D46; font-size:11px; font-weight:700; padding:4px 10px; border-radius:100px; text-transform:uppercase; white-space:nowrap;">Developing</span>
+                </div>
+                <div class="rec-pill selected" onclick="togglePill(this)">
+                    <div class="pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg></div>
+                    <div class="pill-content"><span class="pill-title">Regrouping with 2-Digits</span><span class="pill-meta">Targeted Skill Builder</span></div>
+                    <div class="pill-checkbox"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M20 6L9 17l-5-5"/></svg></div>
+                </div>
+            </div>
+
+            <!-- Gap 3: Word Problems -->
+            <div class="gap-card">
+                <div class="gap-header">
+                    <div class="gap-info">
+                        <h3>Word Problems</h3>
+                        <p>Difficulty identifying operations</p>
+                    </div>
+                </div>
+                <div class="rec-pill selected" onclick="togglePill(this)">
+                    <div class="pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+                    <div class="pill-content"><span class="pill-title">Subtraction Word Stories</span><span class="pill-meta">Contextual Application</span></div>
+                    <div class="pill-checkbox"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><path d="M20 6L9 17l-5-5"/></svg></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="assign-footer">
+            <div class="assign-summary" id="assign-summary">4 Exercises Selected for Aisha</div>
+            <button class="primary-btn" onclick="openDateSheet()">
+                Create Bundle &amp; Assign
+            </button>
+        </div>
+
+        <!-- Date overlay -->
+        <div class="date-overlay" id="assign-date-overlay" onclick="closeDateSheet()"></div>
+
+        <!-- Date sheet -->
+        <div class="date-sheet-panel" id="assign-date-sheet">
+            <div style="width:36px; height:4px; background:#D9D4C7; border-radius:100px; margin:0 auto 20px;"></div>
+            <h2 style="font-family:var(--font-serif); font-size:20px; font-weight:700; margin-bottom:4px;">Set Due Date</h2>
+            <p style="font-size:13px; color:var(--text-secondary); margin-bottom:20px;" id="assign-sheet-subtitle">4 exercises for Aisha Mahmood</p>
+
+            <div id="assign-date-options">
+                <div class="date-option selected" id="adate-1" onclick="selectDateOpt('adate-1')">
+                    <div class="date-option-left">
+                        <div class="date-option-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        </div>
+                        <div><div class="date-option-label">Tomorrow</div><div class="date-option-sub">Quick turnaround</div></div>
+                    </div>
+                    <div class="date-radio"><svg width="10" height="10" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="6"/></svg></div>
+                </div>
+                <div class="date-option" id="adate-2" onclick="selectDateOpt('adate-2')">
+                    <div class="date-option-left">
+                        <div class="date-option-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                        </div>
+                        <div><div class="date-option-label">End of This Week</div><div class="date-option-sub">Friday, Feb 28</div></div>
+                    </div>
+                    <div class="date-radio"></div>
+                </div>
+                <div class="date-option" id="adate-3" onclick="selectDateOpt('adate-3')">
+                    <div class="date-option-left">
+                        <div class="date-option-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                        </div>
+                        <div><div class="date-option-label">Next Friday</div><div class="date-option-sub">Mar 7 · 1 week away</div></div>
+                    </div>
+                    <div class="date-radio"></div>
+                </div>
+                <div class="date-option" id="adate-4" onclick="selectDateOpt('adate-4')">
+                    <div class="date-option-left">
+                        <div class="date-option-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        </div>
+                        <div><div class="date-option-label">Custom Date</div><div class="date-option-sub" id="adate-4-sub">Pick from calendar</div></div>
+                    </div>
+                    <div class="date-radio"></div>
+                </div>
+            </div>
+
+            <!-- Calendar picker -->
+            <div id="assign-cal" style="display:none; margin-top:8px; margin-bottom:20px; background:white; border:1.5px solid var(--color-tree); border-radius:14px; padding:14px 14px 10px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+                    <button id="acal-prev" style="background:none; border:none; cursor:pointer; color:var(--color-tree); padding:4px; display:flex; align-items:center;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <span id="acal-label" style="font-size:13px; font-weight:700;"></span>
+                    <button id="acal-next" style="background:none; border:none; cursor:pointer; color:var(--color-tree); padding:4px; display:flex; align-items:center;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                    </button>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:8px;">
+                    <div style="text-align:center; font-size:12px; font-weight:700; color:var(--text-tertiary); padding:4px 0;">Su</div>
+                    <div style="text-align:center; font-size:12px; font-weight:700; color:var(--text-tertiary); padding:4px 0;">Mo</div>
+                    <div style="text-align:center; font-size:12px; font-weight:700; color:var(--text-tertiary); padding:4px 0;">Tu</div>
+                    <div style="text-align:center; font-size:12px; font-weight:700; color:var(--text-tertiary); padding:4px 0;">We</div>
+                    <div style="text-align:center; font-size:12px; font-weight:700; color:var(--text-tertiary); padding:4px 0;">Th</div>
+                    <div style="text-align:center; font-size:12px; font-weight:700; color:var(--text-tertiary); padding:4px 0;">Fr</div>
+                    <div style="text-align:center; font-size:12px; font-weight:700; color:var(--text-tertiary); padding:4px 0;">Sa</div>
+                </div>
+                <div id="acal-grid" style="display:grid; grid-template-columns:repeat(7,1fr); gap:4px;"></div>
+            </div>
+
+            <button class="confirm-btn" onclick="confirmAssignment()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+                Send to Aisha
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ── Assignment Success Screen ── -->
+    <div id="success-screen" class="success-screen">
+
+        <!-- Content -->
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px var(--space-lg); text-align:center; overflow-y:auto;">
+
+            <div class="celebration-icon">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="22" x2="12" y2="10" stroke="var(--color-tree)" stroke-width="2"/>
+                    <path d="M12 14 C9 12 5 13 5 9 C5 5 9 4 12 7" fill="#4F6D46"/>
+                    <path d="M12 11 C15 9 19 10 19 6 C19 2 15 1 12 4" fill="#7D8C55"/>
+                    <line x1="8" y1="22" x2="16" y2="22" stroke="var(--color-tree)" stroke-width="2.5"/>
+                </svg>
+                <!-- Nature confetti ring -->
+                <svg style="position:absolute; width:140px; height:140px; pointer-events:none;" viewBox="0 0 140 140">
+                    <ellipse cx="22" cy="25" rx="7" ry="4" fill="#7D8C55" transform="rotate(-40 22 25)" opacity="0.8"/>
+                    <rect x="100" y="18" width="18" height="8" rx="4" fill="#A0724A" opacity="0.75"/>
+                    <ellipse cx="115" cy="108" rx="6" ry="7" fill="#C8913A" opacity="0.8"/>
+                    <rect x="111" y="101" width="8" height="4" rx="2" fill="#7D5A2A" opacity="0.8"/>
+                    <ellipse cx="20" cy="112" rx="6" ry="3.5" fill="#4F6D46" transform="rotate(30 20 112)" opacity="0.7"/>
+                    <line x1="76" y1="14" x2="76" y2="8" stroke="#7D8C55" stroke-width="1.5"/>
+                    <ellipse cx="73" cy="10" rx="4" ry="2.5" fill="#7D8C55" transform="rotate(-20 73 10)" opacity="0.7"/>
+                </svg>
+            </div>
+
+            <h1 style="font-family:var(--font-serif); font-size:28px; line-height:1.2; margin-bottom:12px;">Great Job!</h1>
+            <p style="font-size:15px; color:var(--text-secondary); max-width:280px; margin:0 auto 32px;" id="success-subtitle">The bundle has been successfully assigned to Aisha Mahmood.</p>
+
+            <!-- Assignment summary card -->
+            <div style="width:100%; background:#F7F2EA; border-radius:20px; padding:20px; border:1px solid #EBE3D5; text-align:left;">
+                <span style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-tertiary); margin-bottom:12px; display:block;">Assignment Summary</span>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:44px; height:44px; background:var(--color-tree); color:white; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:17px; font-family:var(--font-serif); flex-shrink:0;">AM</div>
+                    <div>
+                        <div style="font-weight:600; font-size:15px;">Aisha Mahmood</div>
+                        <div style="font-size:13px; color:var(--text-secondary);" id="success-summary-line">4 exercises · Due Tomorrow</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div style="padding:0 var(--space-lg) 48px; display:flex; flex-direction:column; gap:12px; flex-shrink:0;">
+            <button class="primary-btn" onclick="assignToMore()">Assign to More Students</button>
+            <button class="success-secondary-btn" onclick="goToRoster()">View Classroom</button>
+            <div class="tertiary-link" onclick="returnToProfile()">Return to Profile</div>
+        </div>
+
+    </div>
+
+    <!-- ── Student Select Sheet ── -->
+    <div id="student-select-overlay" class="student-select-overlay" onclick="ssClose()">
+        <div class="student-select-sheet" onclick="event.stopPropagation()">
+            <div style="width:40px; height:4px; background:#E0DDD5; border-radius:2px; position:absolute; top:12px; left:50%; transform:translateX(-50%);"></div>
+            <button onclick="ssClose()" style="position:absolute; top:24px; right:24px; background:var(--bg-card); border:none; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-secondary);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+
+            <!-- Sheet header -->
+            <div style="margin-top:20px; margin-bottom:20px;">
+                <span style="font-size:12px; font-weight:700; color:var(--color-tree); text-transform:uppercase; letter-spacing:0.1em; display:block; margin-bottom:4px;">Assign Exercise</span>
+                <h2 style="font-family:var(--font-serif); font-size:24px; font-weight:bold; margin-bottom:4px;">Select Students</h2>
+                <p style="font-size:14px; color:var(--text-secondary);">Gap Analysis bundle · 4 exercises</p>
+            </div>
+
+            <!-- Search -->
+            <div style="position:relative; margin-bottom:20px;">
+                <svg style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-tertiary);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input id="ss-search" type="text" class="ss-search-input" placeholder="Search students…" oninput="ssFilter()">
+            </div>
+
+            <!-- Select All bar -->
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid #F0EDE4; margin-bottom:4px;">
+                <span style="font-size:13px; font-weight:600; color:var(--text-secondary);">Room 2 · Grade 3</span>
+                <span id="ss-select-all-btn" style="color:var(--color-tree); font-size:13px; font-weight:700; cursor:pointer;" onclick="ssToggleAll()">Select All</span>
+            </div>
+
+            <!-- Roster -->
+            <div class="ss-roster-list" id="ss-roster">
+
+                <!-- Aisha Khan — 85% assigned -->
+                <div class="ss-student-row" data-name="aisha khan" onclick="ssToggleRow(this)">
+                    <div class="ss-checkbox checked"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div class="ss-avatar" style="background:linear-gradient(160deg,#E8F0E0 0%,#C8DDB8 100%);">
+                        <svg width="26" height="26" viewBox="0 0 52 52" fill="none">
+                            <rect x="24" y="36" width="5" height="12" rx="2" fill="#7A5230"/>
+                            <ellipse cx="26" cy="30" rx="10" ry="9" fill="#3D6B35"/>
+                            <ellipse cx="26" cy="23" rx="13" ry="11" fill="#4F8040"/>
+                            <ellipse cx="26" cy="17" rx="9" ry="8" fill="#62A050"/>
+                        </svg>
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:15px; font-weight:600;">Aisha Khan</div>
+                        <div style="font-size:12px; color:var(--text-tertiary);">Ahead in phonics</div>
+                    </div>
+                </div>
+
+                <!-- Bilal Ahmed — 74% -->
+                <div class="ss-student-row" data-name="bilal ahmed" onclick="ssToggleRow(this)">
+                    <div class="ss-checkbox checked"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div class="ss-avatar" style="background:linear-gradient(160deg,#EDF4E8 0%,#D4E8C4 100%);">
+                        <svg width="26" height="26" viewBox="0 0 52 52" fill="none">
+                            <rect x="24" y="37" width="5" height="11" rx="2" fill="#7A5230"/>
+                            <ellipse cx="26" cy="28" rx="12" ry="11" fill="#4F7840"/>
+                            <ellipse cx="26" cy="22" rx="10" ry="9" fill="#5E9050"/>
+                        </svg>
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:15px; font-weight:600;">Bilal Ahmed</div>
+                        <div style="font-size:12px; color:var(--text-tertiary);">Needs practice on sums</div>
+                    </div>
+                </div>
+
+                <!-- Zara Chaudhry — 92% -->
+                <div class="ss-student-row" data-name="zara chaudhry" onclick="ssToggleRow(this)">
+                    <div class="ss-checkbox"></div>
+                    <div class="ss-avatar" style="background:linear-gradient(160deg,#E8F0E0 0%,#C8DDB8 100%);">
+                        <svg width="26" height="26" viewBox="0 0 52 52" fill="none">
+                            <rect x="24" y="36" width="5" height="12" rx="2" fill="#7A5230"/>
+                            <ellipse cx="26" cy="31" rx="11" ry="8" fill="#3A6030"/>
+                            <ellipse cx="18" cy="26" rx="9" ry="8" fill="#4A7840"/>
+                            <ellipse cx="34" cy="26" rx="9" ry="8" fill="#4A7840"/>
+                            <ellipse cx="26" cy="20" rx="11" ry="9" fill="#5E9850"/>
+                        </svg>
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:15px; font-weight:600;">Zara Chaudhry</div>
+                        <div style="font-size:12px; color:var(--text-tertiary);">Top of the class</div>
+                    </div>
+                </div>
+
+                <!-- Dawood Malik — 58% -->
+                <div class="ss-student-row" data-name="dawood malik" onclick="ssToggleRow(this)">
+                    <div class="ss-checkbox checked"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div class="ss-avatar" style="background:linear-gradient(160deg,#F5EFE6 0%,#E8DDD0 100%);">
+                        <svg width="26" height="26" viewBox="0 0 52 52" fill="none">
+                            <rect x="25" y="38" width="3" height="9" rx="1.5" fill="#8B6340"/>
+                            <path d="M26 37 Q20 30 22 24 Q26 28 26 37Z" fill="#6A8C50"/>
+                            <path d="M26 37 Q32 30 30 24 Q26 28 26 37Z" fill="#5A7A42"/>
+                            <ellipse cx="26" cy="24" rx="5" ry="4" fill="#7AAA58"/>
+                        </svg>
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:15px; font-weight:600;">Dawood Malik</div>
+                        <div style="font-size:12px; color:#B85C00; font-weight:500;">Struggling with counting</div>
+                    </div>
+                </div>
+
+                <!-- Emaan Siddiqui — 81% -->
+                <div class="ss-student-row" data-name="emaan siddiqui" onclick="ssToggleRow(this)">
+                    <div class="ss-checkbox"></div>
+                    <div class="ss-avatar" style="background:linear-gradient(160deg,#EDF4E8 0%,#D4E8C4 100%);">
+                        <svg width="26" height="26" viewBox="0 0 52 52" fill="none">
+                            <rect x="24" y="37" width="4" height="11" rx="2" fill="#7A5230"/>
+                            <ellipse cx="26" cy="29" rx="11" ry="10" fill="#4A7838"/>
+                            <ellipse cx="26" cy="23" rx="8" ry="7" fill="#60965A"/>
+                        </svg>
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:15px; font-weight:600;">Emaan Siddiqui</div>
+                        <div style="font-size:12px; color:var(--text-tertiary);">Solid reader</div>
+                    </div>
+                </div>
+
+                <!-- Annus Raza — 79% -->
+                <div class="ss-student-row" data-name="annus raza" onclick="ssToggleRow(this)">
+                    <div class="ss-checkbox checked"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div class="ss-avatar" style="background:linear-gradient(160deg,#EDF4E8 0%,#D4E8C4 100%);">
+                        <svg width="26" height="26" viewBox="0 0 52 52" fill="none">
+                            <rect x="24" y="37" width="4" height="11" rx="2" fill="#7A5230"/>
+                            <line x1="26" y1="37" x2="18" y2="28" stroke="#7A5230" stroke-width="2.5" stroke-linecap="round"/>
+                            <line x1="26" y1="33" x2="34" y2="25" stroke="#7A5230" stroke-width="2.5" stroke-linecap="round"/>
+                            <ellipse cx="16" cy="25" rx="7" ry="6" fill="#558040"/>
+                            <ellipse cx="35" cy="22" rx="7" ry="6" fill="#558040"/>
+                            <ellipse cx="26" cy="20" rx="9" ry="8" fill="#68A050"/>
+                        </svg>
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:15px; font-weight:600;">Annus Raza</div>
+                        <div style="font-size:12px; color:var(--text-tertiary);">Review subtraction</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer CTA -->
+            <div class="ss-footer">
+                <button class="ss-assign-btn" id="ss-assign-btn" onclick="ssConfirmAssign()">
+                    Assign to 4 Students
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+</div>
+
+<script>
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    function showConfirm(modalId, msg) {
+        closeModal(modalId);
+        showToast(msg);
+    }
+
+    function setPriority(level) {
+        ['low','med','high'].forEach(l => {
+            const btn = document.getElementById('pri-' + l);
+            if (l === level) {
+                btn.style.borderColor = 'var(--color-tree)';
+                btn.style.background  = '#F0F5ED';
+                btn.style.color       = 'var(--color-tree)';
+            } else {
+                btn.style.borderColor = 'var(--border-card)';
+                btn.style.background  = 'var(--bg-page)';
+                btn.style.color       = 'var(--text-secondary)';
+            }
+        });
+    }
+
+    function setTopic(btn) {
+        btn.closest('div').querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function showSettings(v) {
+        const s = document.getElementById('settings-screen');
+        s.style.display = v ? 'flex' : 'none';
+    }
+
+    function openSettingsModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeSettingsModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    function confirmSettingsAction(modalId, msg) {
+        closeSettingsModal(modalId);
+        showToast(msg);
+    }
+
+    function toggleSwitch(el) {
+        const on = el.dataset.on === 'true';
+        el.dataset.on = String(!on);
+        el.style.background = !on ? 'var(--color-tree)' : '#D0D0D0';
+        el.querySelector('div').style.left = !on ? '21px' : '3px';
+    }
+
+    function selectAppearance(el, val) {
+        el.closest('div').querySelectorAll('.appearance-option').forEach(o => {
+            o.classList.remove('selected');
+            const chk = o.querySelector('.modal-check');
+            if (chk) chk.remove();
+        });
+        el.classList.add('selected');
+        const chk = document.createElement('div');
+        chk.className = 'modal-check'; chk.textContent = '✓';
+        el.appendChild(chk);
+        document.getElementById('pref-appearance-val').textContent = val;
+    }
+
+    function selectLanguage(el, val) {
+        el.closest('div').querySelectorAll('.lang-option').forEach(o => {
+            o.classList.remove('selected');
+            const chk = o.querySelector('.modal-check');
+            if (chk) chk.remove();
+        });
+        el.classList.add('selected');
+        const chk = document.createElement('div');
+        chk.className = 'modal-check'; chk.textContent = '✓';
+        el.appendChild(chk);
+        document.getElementById('pref-language-val').textContent = val;
+    }
+
+    function selectReportView(el, val) {
+        el.closest('div').querySelectorAll('.appearance-option').forEach(o => {
+            o.classList.remove('selected');
+            const chk = o.querySelector('.modal-check');
+            if (chk) chk.remove();
+        });
+        el.classList.add('selected');
+        const chk = document.createElement('div');
+        chk.className = 'modal-check'; chk.textContent = '✓';
+        el.appendChild(chk);
+        document.getElementById('pref-report-val').textContent = val;
+    }
+
+    function handleLogout() {
+        closeSettingsModal('modal-logout');
+        showSettings(false);
+        showToast('Signing out…');
+        setTimeout(() => window.location.href = 'index.html', 1200);
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg; t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 3000);
+    }
+
+    /* ── Assign Practice Exercise Screen ── */
+    function openAssignScreen() {
+        document.getElementById('assign-screen').classList.add('open');
+        updateAssignSummary();
+    }
+    function closeAssignScreen() {
+        closeDateSheet();
+        document.getElementById('assign-screen').classList.remove('open');
+    }
+
+    function togglePill(el) {
+        el.classList.toggle('selected');
+        updateAssignSummary();
+    }
+
+    function updateAssignSummary() {
+        const count = document.querySelectorAll('#assign-screen .rec-pill.selected').length;
+        const bar = document.getElementById('assign-summary');
+        bar.textContent = count + ' Exercise' + (count !== 1 ? 's' : '') + ' Selected for Aisha';
+        const sub = document.getElementById('assign-sheet-subtitle');
+        if (sub) sub.textContent = count + ' exercise' + (count !== 1 ? 's' : '') + ' for Aisha Mahmood';
+    }
+
+    function openDateSheet() {
+        const count = document.querySelectorAll('#assign-screen .rec-pill.selected').length;
+        if (count === 0) { showToast('Select at least one exercise first.'); return; }
+        document.getElementById('assign-date-overlay').classList.add('active');
+        document.getElementById('assign-date-sheet').classList.add('active');
+    }
+    function closeDateSheet() {
+        document.getElementById('assign-date-overlay').classList.remove('active');
+        document.getElementById('assign-date-sheet').classList.remove('active');
+    }
+
+    function selectDateOpt(id) {
+        document.querySelectorAll('.date-option').forEach(el => el.classList.remove('selected'));
+        document.getElementById(id).classList.add('selected');
+        document.getElementById('assign-cal').style.display = id === 'adate-4' ? 'block' : 'none';
+    }
+
+    function getSelectedDueDateLabel() {
+        const selected = document.querySelector('#assign-date-options .date-option.selected');
+        if (!selected) return 'Tomorrow';
+        const label = selected.querySelector('.date-option-label');
+        const sub   = selected.querySelector('.date-option-sub');
+        if (selected.id === 'adate-1') return 'Tomorrow';
+        if (selected.id === 'adate-4') return sub ? sub.textContent : 'Custom Date';
+        return sub ? sub.textContent : (label ? label.textContent : 'Tomorrow');
+    }
+
+    function confirmAssignment() {
+        const count = document.querySelectorAll('#assign-screen .rec-pill.selected').length;
+        const dueLabel = getSelectedDueDateLabel();
+        closeDateSheet();
+        document.getElementById('success-summary-line').textContent =
+            count + ' exercise' + (count !== 1 ? 's' : '') + ' · Due ' + dueLabel;
+        document.getElementById('success-screen').classList.add('open');
+    }
+
+    function assignToMore() {
+        document.getElementById('student-select-overlay').classList.add('open');
+        ssUpdateBtn();
+    }
+    function ssClose() {
+        document.getElementById('student-select-overlay').classList.remove('open');
+        document.getElementById('ss-search').value = '';
+        ssFilter();
+    }
+    function goToRoster() { window.location.href = 'roster.html'; }
+    function returnToProfile() {
+        document.getElementById('success-screen').classList.remove('open');
+        closeAssignScreen();
+    }
+
+    /* ── Student Select Sheet JS ── */
+    const checkSVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+
+    function ssToggleRow(row) {
+        const box = row.querySelector('.ss-checkbox');
+        const isChecked = box.classList.contains('checked');
+        if (isChecked) { box.classList.remove('checked'); box.innerHTML = ''; }
+        else { box.classList.add('checked'); box.innerHTML = checkSVG; }
+        ssUpdateBtn();
+        ssUpdateSelectAllLabel();
+    }
+
+    function ssUpdateBtn() {
+        const count = document.querySelectorAll('.ss-checkbox.checked').length;
+        document.getElementById('ss-assign-btn').textContent =
+            'Assign to ' + count + ' Student' + (count !== 1 ? 's' : '');
+    }
+
+    let ssAllSelected = false;
+    function ssToggleAll() {
+        ssAllSelected = !ssAllSelected;
+        document.querySelectorAll('.ss-student-row').forEach(row => {
+            if (row.style.display === 'none') return;
+            const box = row.querySelector('.ss-checkbox');
+            if (ssAllSelected) { box.classList.add('checked'); box.innerHTML = checkSVG; }
+            else { box.classList.remove('checked'); box.innerHTML = ''; }
+        });
+        document.getElementById('ss-select-all-btn').textContent = ssAllSelected ? 'Deselect All' : 'Select All';
+        ssUpdateBtn();
+    }
+
+    function ssUpdateSelectAllLabel() {
+        const total   = document.querySelectorAll('.ss-student-row:not([style*="none"])').length;
+        const checked = document.querySelectorAll('.ss-student-row:not([style*="none"]) .ss-checkbox.checked').length;
+        ssAllSelected = total > 0 && checked === total;
+        document.getElementById('ss-select-all-btn').textContent = ssAllSelected ? 'Deselect All' : 'Select All';
+    }
+
+    function ssFilter() {
+        const q = document.getElementById('ss-search').value.toLowerCase();
+        document.querySelectorAll('.ss-student-row').forEach(row => {
+            row.style.display = row.dataset.name.includes(q) ? 'flex' : 'none';
+        });
+        ssUpdateSelectAllLabel();
+    }
+
+    function ssConfirmAssign() {
+        const count = document.querySelectorAll('.ss-checkbox.checked').length;
+        if (count === 0) { showToast('Select at least one student.'); return; }
+        document.getElementById('student-select-overlay').classList.remove('open');
+        document.getElementById('success-screen').classList.remove('open');
+        closeAssignScreen();
+        showToast('Bundle assigned to ' + count + ' student' + (count !== 1 ? 's' : '') + '!');
+    }
+
+    /* Calendar */
+    let acalYear, acalMonth;
+    function renderAssignCal(year, month) {
+        const names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        const short = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        document.getElementById('acal-label').textContent = names[month] + ' ' + year;
+        const grid = document.getElementById('acal-grid');
+        grid.innerHTML = '';
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const today = new Date();
+        for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
+        for (let d = 1; d <= daysInMonth; d++) {
+            const cell = document.createElement('div');
+            cell.className = 'cal-day';
+            cell.textContent = d;
+            const cellDate = new Date(year, month, d);
+            if (cellDate < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
+                cell.classList.add('cal-day-past');
+            } else {
+                cell.onclick = () => {
+                    document.querySelectorAll('.cal-day-selected').forEach(el => el.classList.remove('cal-day-selected'));
+                    cell.classList.add('cal-day-selected');
+                    document.getElementById('adate-4-sub').textContent = short[month] + ' ' + d + ', ' + year;
+                };
+            }
+            grid.appendChild(cell);
+        }
+    }
+    function initAssignCal() {
+        const now = new Date(); acalYear = now.getFullYear(); acalMonth = now.getMonth();
+        renderAssignCal(acalYear, acalMonth);
+    }
+    document.getElementById('acal-prev').addEventListener('click', () => {
+        acalMonth--; if (acalMonth < 0) { acalMonth = 11; acalYear--; }
+        renderAssignCal(acalYear, acalMonth);
+    });
+    document.getElementById('acal-next').addEventListener('click', () => {
+        acalMonth++; if (acalMonth > 11) { acalMonth = 0; acalYear++; }
+        renderAssignCal(acalYear, acalMonth);
+    });
+    initAssignCal();
+</script>
+</body>
+</html>
